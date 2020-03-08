@@ -1,0 +1,8 @@
+{
+	"parent": "smallstairs:block/inner_small_stairs",
+	"textures": {
+		"bottom": "minecraft:blocks/wool_colored_red",
+		"top": "minecraft:blocks/wool_colored_red",
+		"side": "minecraft:blocks/wool_colored_red"
+	}
+}

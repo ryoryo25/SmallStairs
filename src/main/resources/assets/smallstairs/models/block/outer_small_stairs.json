@@ -1,0 +1,84 @@
+{
+	"credit": "Made with Blockbench, a free, modern block model editor by JannisX11",
+	"textures": {
+		"particle": "#side"
+	},
+	"elements": [
+		{
+			"name": "cube",
+			"from": [5.332999999999998, 0, 5.332999999999998],
+			"to": [16, 5.333, 16],
+			"faces": {
+				"north": {
+					"uv": [0, 10.6671875, 10.66640625, 16],
+					"texture": "#side",
+					"cullface": "north"
+				},
+				"east": {
+					"uv": [0, 10.6671875, 10.66640625, 16],
+					"texture": "#side",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [5.33359375, 10.6671875, 16, 16],
+					"texture": "#side",
+					"cullface": "south"
+				},
+				"west": {
+					"uv": [5.33359375, 10.6671875, 16, 16],
+					"texture": "#side",
+					"cullface": "west"
+				},
+				"up": {
+					"uv": [5.33359375, 5.33359375, 16, 16],
+					"texture": "#top"
+				},
+				"down": {
+					"uv": [5.33359375, 0, 16, 10.66640625],
+					"texture": "#bottom",
+					"cullface": "down"
+				}
+			}
+		},
+		{
+			"name": "cube",
+			"from": [
+				10.666999999999998,
+				5.333,
+				10.666999999999998
+			],
+			"to": [16, 10.666, 16],
+			"faces": {
+				"north": {
+					"uv": [0, 5.333, 5.3328125, 10.6658125],
+					"texture": "#side"
+				},
+				"east": {
+					"uv": [0, 5.333, 5.3328125, 10.6658125],
+					"texture": "#side",
+					"cullface": "east"
+				},
+				"south": {
+					"uv": [10.6671875, 5.333, 16, 10.6658125],
+					"texture": "#side",
+					"cullface": "south"
+				},
+				"west": {
+					"uv": [10.6671875, 5.333, 16, 10.6658125],
+					"texture": "#side"
+				},
+				"up": {
+					"uv": [10.6671875, 10.6671875, 16, 16],
+					"texture": "#top",
+					"cullface": "up"
+				},
+				"down": {
+					"uv": [12, 0, 16, 4],
+					"texture": "#bottom",
+					"cullface": "down"
+				}
+			}
+		}
+	],
+	"groups": [0, 1]
+}

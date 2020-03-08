@@ -1,0 +1,16 @@
+[
+	{
+		"modid": "smallstairs",
+		"name": "SmallStairs",
+		"description": "This mod adds some small stairs.",
+		"version": "${version}",
+		"mcversion": "${mcversion}",
+		"url": "Nothing",
+		"updateUrl": "Nothing",
+		"authorList": ["ryoryo"],
+		"credits": "sayo, and many minecraft modders!",
+		"logoFile": "assets/smallstairs/textures/mod_logo.png",
+		"screenshots": [],
+		"dependencies": ["mod_MinecraftForge", "polishedlib"]
+	}
+]

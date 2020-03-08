@@ -1,0 +1,8 @@
+{
+	"parent": "polishedstone_v2:block/inner_small_stairs",
+	"textures": {
+		"bottom": "polishedstone_v2:blocks/black_quartz_block_bottom",
+		"top": "polishedstone_v2:blocks/black_quartz_block_top",
+		"side": "polishedstone_v2:blocks/black_quartz_block_side"
+	}
+}
