@@ -80,7 +80,7 @@ public class CommonProxy
 		if(Loader.isModLoaded("quark"))
 			quantity = 9;
 		else
-			SmallStairs.logger.addInfo("Quark isn't loaded.");
+			SmallStairs.LOGGER.info("Quark isn't loaded.");
 
 		addRecipe("small_stairs_" + name, new ItemStack(output, quantity), "M ", "MM", 'M', material);
 	}
