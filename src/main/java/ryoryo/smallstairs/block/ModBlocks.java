@@ -1,15 +1,8 @@
 package ryoryo.smallstairs.block;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import ryoryo.polishedlib.util.Utils;
-import ryoryo.polishedlib.util.interfaces.IModId;
+import ryoryo.smallstairs.SmallStairs;
 
 public class ModBlocks
 {
@@ -61,13 +54,6 @@ public class ModBlocks
 	 */
 	public static void registerSmallStairs(Block block, String name)
 	{
-		ResourceLocation location = new ResourceLocation(((IModId) block).getModId(), "small_stairs_" + name);
-		ForgeRegistries.BLOCKS.register(block.setRegistryName(location));
-		ForgeRegistries.ITEMS.register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
-
-		if(Utils.isClient())
-		{
-			ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(block), 0, new ModelResourceLocation(location, "inventory"));
-		}
+		SmallStairs.REGISTER.registerBlock(block, "small_stairs_" + name);
 	}
 }

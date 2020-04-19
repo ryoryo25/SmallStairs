@@ -13,12 +13,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import ryoryo.polishedlib.util.Utils;
 import ryoryo.polishedlib.util.enums.EnumColor;
 import ryoryo.polishedlib.util.enums.EnumPlanks;
 import ryoryo.smallstairs.SmallStairs;
 import ryoryo.smallstairs.block.ModBlocks;
-import ryoryo.smallstairs.util.References;
 
 public class CommonProxy
 {
@@ -59,12 +57,12 @@ public class CommonProxy
 
 	public static void addRecipe(String name, ItemStack output, Object... params)
 	{
-		Utils.addRecipe(References.MOD_ID, name, output, params);
+		SmallStairs.REGISTER.addRecipe(name, output, params);
 	}
 
 	public static void addShapelessRecipe(String name, @Nonnull ItemStack output, Object... params)
 	{
-		Utils.addShapelessRecipe(References.MOD_ID, name, output, params);
+		SmallStairs.REGISTER.addShapelessRecipe(name, output, params);
 	}
 
 	/**

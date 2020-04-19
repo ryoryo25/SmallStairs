@@ -11,6 +11,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import ryoryo.polishedlib.util.RegistryUtils;
 import ryoryo.smallstairs.proxy.CommonProxy;
 import ryoryo.smallstairs.util.References;
 
@@ -24,6 +25,7 @@ public class SmallStairs
 	public static CommonProxy proxy;
 
 	public static final Logger LOGGER = LogManager.getLogger(References.MOD_ID);
+	public static final RegistryUtils REGISTER = new RegistryUtils(References.MOD_ID);
 
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)

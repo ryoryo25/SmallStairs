@@ -19,10 +19,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ryoryo.polishedlib.util.Utils;
-import ryoryo.polishedlib.util.interfaces.IModId;
-import ryoryo.smallstairs.util.References;
 
-public class BlockSmallStairs extends BlockStairs implements IModId
+public class BlockSmallStairs extends BlockStairs
 {
 	private static final double base00 = 0.0D;
 	private static final double base03 = 1.0D / 3.0D;
@@ -310,12 +308,6 @@ public class BlockSmallStairs extends BlockStairs implements IModId
 		this.setCreativeTab(CreativeTabs.BUILDING_BLOCKS);
 		this.setUnlocalizedName("small_stairs_" + name);
 		this.setLightOpacity(0);
-	}
-
-	@Override
-	public String getModId()
-	{
-		return References.MOD_ID;
 	}
 
 	@Override
