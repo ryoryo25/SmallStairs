@@ -2,6 +2,7 @@ package ryoryo.smallstairs.block;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.annotation.Nullable;
 
@@ -325,39 +326,35 @@ public class BlockSmallStairs extends BlockStairs
 	@Override
 	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isActualState)
 	{
-		state = this.getActualState(state, world, pos);
-
-		for(AxisAlignedBB aabb : getCollisionBoxList(state))
-		{
-			addCollisionBoxToList(pos, entityBox, collidingBoxes, aabb);
-		}
+		getCollisionBoxList(this.getActualState(state, world, pos))
+			.forEach(aabb -> addCollisionBoxToList(pos, entityBox, collidingBoxes, aabb));
 	}
 
-	private static List<AxisAlignedBB> getCollisionBoxList(IBlockState bstate)
+	private static List<AxisAlignedBB> getCollisionBoxList(IBlockState state)
 	{
 		List<AxisAlignedBB> list = new ArrayList<AxisAlignedBB>();
 
-		BlockStairs.EnumShape shape = (BlockStairs.EnumShape) bstate.getValue(BlockSmallStairs.SHAPE);
+		BlockStairs.EnumShape shape = (BlockStairs.EnumShape) state.getValue(BlockSmallStairs.SHAPE);
 
 		if(shape == BlockStairs.EnumShape.STRAIGHT || shape == BlockStairs.EnumShape.INNER_LEFT || shape == BlockStairs.EnumShape.INNER_RIGHT)
 		{
-			list.add(getBaseBlock(bstate));
-			list.add(getCollQuarterBlock(bstate));
+			list.add(getBaseBlock(state));
+			list.add(getCollQuarterBlock(state));
 		}
 
 		if(shape != BlockStairs.EnumShape.STRAIGHT)
 		{
-			list.add(getCollEighthBaseBlock(bstate));
-			list.add(getCollEighthBlock(bstate));
+			list.add(getCollEighthBaseBlock(state));
+			list.add(getCollEighthBlock(state));
 		}
 
 		return list;
 	}
 
-	private static AxisAlignedBB getBaseBlock(IBlockState bstate)
+	private static AxisAlignedBB getBaseBlock(IBlockState state)
 	{
-		boolean flag = bstate.getValue(BlockSmallStairs.HALF) == BlockStairs.EnumHalf.TOP;
-		switch((EnumFacing) bstate.getValue(BlockSmallStairs.FACING))
+		boolean flag = state.getValue(BlockSmallStairs.HALF) == BlockStairs.EnumHalf.TOP;
+		switch((EnumFacing) state.getValue(BlockSmallStairs.FACING))
 		{
 		case NORTH:
 		default:
@@ -371,12 +368,12 @@ public class BlockSmallStairs extends BlockStairs
 		}
 	}
 
-	private static AxisAlignedBB getCollEighthBaseBlock(IBlockState bstate)
+	private static AxisAlignedBB getCollEighthBaseBlock(IBlockState state)
 	{
-		EnumFacing facing = (EnumFacing) bstate.getValue(BlockSmallStairs.FACING);
+		EnumFacing facing = (EnumFacing) state.getValue(BlockSmallStairs.FACING);
 		EnumFacing facing1;
 
-		switch((BlockStairs.EnumShape) bstate.getValue(BlockSmallStairs.SHAPE))
+		switch((BlockStairs.EnumShape) state.getValue(BlockSmallStairs.SHAPE))
 		{
 		case OUTER_LEFT:
 		default:
@@ -392,7 +389,7 @@ public class BlockSmallStairs extends BlockStairs
 			facing1 = facing.rotateYCCW();
 		}
 
-		boolean flag = bstate.getValue(BlockSmallStairs.HALF) == BlockStairs.EnumHalf.TOP;
+		boolean flag = state.getValue(BlockSmallStairs.HALF) == BlockStairs.EnumHalf.TOP;
 		switch(facing1)
 		{
 		case NORTH:
@@ -407,9 +404,9 @@ public class BlockSmallStairs extends BlockStairs
 		}
 	}
 
-	private static AxisAlignedBB getCollQuarterBlock(IBlockState bstate)
+	private static AxisAlignedBB getCollQuarterBlock(IBlockState state)
 	{
-		switch((EnumFacing) bstate.getValue(BlockSmallStairs.FACING))
+		switch((EnumFacing) state.getValue(BlockSmallStairs.FACING))
 		{
 		case NORTH:
 		default:
@@ -423,12 +420,12 @@ public class BlockSmallStairs extends BlockStairs
 		}
 	}
 
-	private static AxisAlignedBB getCollEighthBlock(IBlockState bstate)
+	private static AxisAlignedBB getCollEighthBlock(IBlockState state)
 	{
-		EnumFacing facing = (EnumFacing) bstate.getValue(BlockSmallStairs.FACING);
+		EnumFacing facing = (EnumFacing) state.getValue(BlockSmallStairs.FACING);
 		EnumFacing facing1;
 
-		switch((BlockStairs.EnumShape) bstate.getValue(BlockSmallStairs.SHAPE))
+		switch((BlockStairs.EnumShape) state.getValue(BlockSmallStairs.SHAPE))
 		{
 		case OUTER_LEFT:
 		default:
@@ -462,37 +459,11 @@ public class BlockSmallStairs extends BlockStairs
 	@Nullable
 	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end)
 	{
-		List<RayTraceResult> list = new ArrayList<RayTraceResult>();
-
-		for(AxisAlignedBB aabb : getCollisionBoxList(this.getActualState(blockState, world, pos)))
-		{
-			list.add(this.rayTrace(pos, start, end, aabb));
-		}
-
-		RayTraceResult bestresult = null;
-		double d1 = 0.0D;
-
-		for(RayTraceResult result : list)
-		{
-			if(result != null)
-			{
-				double d0 = result.hitVec.squareDistanceTo(end);
-
-				if(d0 > d1)
-				{
-					bestresult = result;
-					d1 = d0;
-				}
-			}
-		}
-
-		return bestresult;
-	}
-
-	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
-	{
-		return super.getActualState(state, world, pos);
+		return getCollisionBoxList(this.getActualState(blockState, world, pos)).stream()
+			.map(aabb -> this.rayTrace(pos, start, end, aabb))
+			.filter(Objects::nonNull)
+			.max((result1, result2) -> (int) (result1.hitVec.squareDistanceTo(end) - result2.hitVec.squareDistanceTo(end)))
+			.orElse(null);
 	}
 
 	/**
