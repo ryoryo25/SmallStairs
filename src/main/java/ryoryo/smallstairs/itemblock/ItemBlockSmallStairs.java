@@ -20,7 +20,6 @@ public class ItemBlockSmallStairs extends ItemBlock
 	public ItemBlockSmallStairs(Block block)
 	{
 		super(block);
-
 	}
 
 	@Override
@@ -37,8 +36,8 @@ public class ItemBlockSmallStairs extends ItemBlock
 
 		if(player.canPlayerEdit(pos, facing, stack) && this.block.canPlaceBlockAt(world, pos))
 		{
-			EnumFacing enumfacing = EnumFacing.fromAngle((double) player.rotationYaw);
-			placeStairs(world, pos, enumfacing, this.block, player, hitY);
+			EnumFacing playerFacing = EnumFacing.fromAngle((double) player.rotationYaw);
+			placeStairs(world, pos, playerFacing, this.block, player, hitY);
 			SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
 			world.playSound(player, pos, soundtype.getPlaceSound(), SoundCategory.BLOCKS, (soundtype.getVolume() + 1.0F) / 2.0F, soundtype.getPitch() * 0.8F);
 			stack.shrink(1);
@@ -52,7 +51,7 @@ public class ItemBlockSmallStairs extends ItemBlock
 
 	public static void placeStairs(World world, BlockPos pos, EnumFacing facing, Block stairs, EntityPlayer player, float hitY)
 	{
-		IBlockState iblockstate = stairs.getDefaultState().withProperty(BlockSmallStairs.FACING, facing).withProperty(BlockSmallStairs.SHAPE, BlockStairs.EnumShape.STRAIGHT);
-		world.setBlockState(pos, facing != EnumFacing.DOWN && (facing == EnumFacing.UP || (double)hitY <= 0.5D) ? iblockstate.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.BOTTOM) : iblockstate.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.TOP), 2);
+		IBlockState state = stairs.getDefaultState().withProperty(BlockSmallStairs.FACING, facing).withProperty(BlockSmallStairs.SHAPE, BlockStairs.EnumShape.STRAIGHT);
+		world.setBlockState(pos, facing != EnumFacing.DOWN && (facing == EnumFacing.UP || (double)hitY <= 0.5D) ? state.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.BOTTOM) : state.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.TOP), 2);
 	}
 }
