@@ -1,10 +1,11 @@
 package ryoryo.smallstairs.block;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import javax.annotation.Nullable;
+
+import com.google.common.collect.Lists;
 
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
@@ -19,7 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import ryoryo.polishedlib.util.Utils;
 
 public class BlockSmallStairs extends BlockStairs
 {
@@ -332,7 +332,7 @@ public class BlockSmallStairs extends BlockStairs
 
 	private static List<AxisAlignedBB> getCollisionBoxList(IBlockState state)
 	{
-		List<AxisAlignedBB> list = new ArrayList<AxisAlignedBB>();
+		List<AxisAlignedBB> list = Lists.newArrayList();
 
 		BlockStairs.EnumShape shape = (BlockStairs.EnumShape) state.getValue(BlockSmallStairs.SHAPE);
 
@@ -528,7 +528,7 @@ public class BlockSmallStairs extends BlockStairs
 		{
 			return flag ? SELECT_TOP_INNER.offset(pos) : SELECT_BOT_INNER.offset(pos);
 		}
-		else
-			return Utils.creatAABB(0, 0, 0, 16, 8, 16).offset(pos);
+
+		return NULL_AABB.offset(pos);
 	}
 }
