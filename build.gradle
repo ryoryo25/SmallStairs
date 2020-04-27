@@ -67,6 +67,15 @@ dependencies {
 
 }
 
+sourceSets {
+	main {
+		java {
+			srcDir 'src/main/java'
+			exclude 'ryoryo/smallstairs/block/LegacyCodes.java'
+		}
+	}
+}
+
 processResources {
 	// this will ensure that this task is redone when the versions change.
 	inputs.property "version", project.version
@@ -83,5 +92,6 @@ processResources {
 	// copy everything else except the mcmod.info
 	from(sourceSets.main.resources.srcDirs) {
 	exclude 'mcmod.info'
+	//exclude "LegacyCodes.java"
 	}
 }
