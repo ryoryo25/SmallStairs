@@ -1,15 +1,11 @@
 package ryoryo.smallstairs.block;
 
-import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Table;
 
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
@@ -26,7 +22,6 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import ryoryo.polishedlib.util.Utils;
 import ryoryo.polishedlib.util.enums.EnumAxis;
-import ryoryo.smallstairs.SmallStairs;
 
 public class BlockSmallStairs extends BlockStairs
 {
@@ -95,90 +90,6 @@ public class BlockSmallStairs extends BlockStairs
 	protected static final AxisAlignedBB SELECT_INNER = new AxisAlignedBB(base00, base00, base00, base10, base06, base10);
 	//********************************************************************************************************************************
 
-	private static final Table<EnumFacing, EnumShape, EnumMap<EnumHalf, List<AxisAlignedBB>>> COLLISION_AABBS = HashBasedTable.create();
-	private static final Table<EnumFacing, EnumShape, EnumMap<EnumHalf, AxisAlignedBB>> SELECTION_AABBS = HashBasedTable.create();
-
-	static
-	{
-		long startTime = System.nanoTime();
-
-		Stream.of(EnumFacing.values())
-		.filter(f -> (f != EnumFacing.UP && f != EnumFacing.DOWN))
-		.forEach(facing ->
-		{
-			for(EnumShape shape : EnumShape.values())
-			{
-				EnumMap<EnumHalf, List<AxisAlignedBB>> halfMap = new EnumMap<EnumHalf, List<AxisAlignedBB>>(EnumHalf.class);
-
-				for(EnumHalf half : EnumHalf.values())
-				{
-					List<AxisAlignedBB> bounds = Lists.newArrayList();
-
-					if(shape == EnumShape.STRAIGHT || shape == EnumShape.INNER_LEFT || shape == EnumShape.INNER_RIGHT)
-					{
-						bounds.add(getStraightStep1(facing, half));
-						bounds.add(getStraightStep2(facing));
-					}
-
-					if(shape == EnumShape.INNER_LEFT || shape == EnumShape.INNER_RIGHT)
-					{
-						bounds.add(getOuterStep1(facing, shape, half));
-						bounds.add(getInnerStep2(facing, shape));
-					}
-
-					if(shape == EnumShape.OUTER_LEFT || shape == EnumShape.OUTER_RIGHT)
-					{
-						bounds.add(getOuterStep1(facing, shape, half));
-						bounds.add(getOuterStep2(facing, shape));
-					}
-
-					halfMap.put(half, bounds);
-				}
-
-				COLLISION_AABBS.put(facing, shape, halfMap);
-			}
-		});
-
-		Stream.of(EnumFacing.values())
-		.filter(f -> (f != EnumFacing.UP && f != EnumFacing.DOWN))
-		.forEach(facing ->
-		{
-			for(EnumShape shape : EnumShape.values())
-			{
-				EnumMap<EnumHalf, AxisAlignedBB> halfMap = new EnumMap<EnumHalf, AxisAlignedBB>(EnumHalf.class);
-
-				for(EnumHalf half : EnumHalf.values())
-				{
-					EnumAxis axis = half == EnumHalf.TOP ? EnumAxis.Y : EnumAxis.NONE;
-					AxisAlignedBB outerBase = shape == EnumShape.OUTER_LEFT ? SELECT_OUTER : Utils.flipAABB(SELECT_OUTER, EnumAxis.X);
-
-					switch(shape)
-					{
-						default:
-						case STRAIGHT:
-							halfMap.put(half, Utils.rotateAABB(Utils.flipAABB(SELECT_STRAIGHT, axis),
-									Utils.getRotationFromNorth(facing)));
-							break;
-						case OUTER_LEFT:
-						case OUTER_RIGHT:
-							halfMap.put(half, Utils.rotateAABB(Utils.flipAABB(outerBase, axis),
-									Utils.getRotationFromNorth(facing)));
-							break;
-						case INNER_LEFT:
-						case INNER_RIGHT:
-							halfMap.put(half, Utils.flipAABB(SELECT_INNER, axis));
-							break;
-					}
-				}
-
-				SELECTION_AABBS.put(facing, shape, halfMap);
-			}
-		});
-
-		long endTime = System.nanoTime();
-		SmallStairs.LOGGER.info("Initializing collision boxes took " + (endTime-startTime)/1000000F + " ms");
-	}
-
 	public BlockSmallStairs(IBlockState modelState, String name)
 	{
 		super(modelState);
@@ -229,14 +140,79 @@ public class BlockSmallStairs extends BlockStairs
 
 	private static List<AxisAlignedBB> getCollisionBoxList(IBlockState state)
 	{
-		List<AxisAlignedBB> list = COLLISION_AABBS.get(state.getValue(FACING), state.getValue(SHAPE)).get(state.getValue(HALF));
-		return list != null ? list : Lists.newArrayList(FULL_BLOCK_AABB);
+		List<AxisAlignedBB> list = Lists.newArrayList();
+
+		BlockStairs.EnumShape shape = state.getValue(SHAPE);
+
+		/**
+		 * B: xxx M: xxx T: ...
+		 * B: xxx M: ... T: ...
+		 * B: ... M: ... T: ...
+		 */
+		if(shape == BlockStairs.EnumShape.STRAIGHT || shape == BlockStairs.EnumShape.INNER_LEFT || shape == BlockStairs.EnumShape.INNER_RIGHT)
+		{
+			list.add(getStraightStep1(state));
+			list.add(getStraightStep2(state));
+		}
+
+		/**
+		 * B: ... M: x.. T: ...
+		 * B: xx. M: x.. T: ...
+		 * B: xx. M: x.. T: ...
+		 */
+		if(shape == BlockStairs.EnumShape.INNER_LEFT || shape == BlockStairs.EnumShape.INNER_RIGHT)
+		{
+			list.add(getOuterStep1(state));
+			list.add(getInnerStep2(state));
+		}
+
+		/**
+		 * B: xx. M: x.. T: ...
+		 * B: xx. M: ... T: ...
+		 * B: ... M: ... T: ...
+		 */
+		if(shape == BlockStairs.EnumShape.OUTER_LEFT || shape == BlockStairs.EnumShape.OUTER_RIGHT)
+		{
+			list.add(getOuterStep1(state));
+			list.add(getOuterStep2(state));
+		}
+
+		return list;
 	}
 
 	private static AxisAlignedBB getSelectionBox(IBlockState state)
 	{
-		AxisAlignedBB aabb = SELECTION_AABBS.get(state.getValue(FACING), state.getValue(SHAPE)).get(state.getValue(HALF));
-		return aabb != null ? aabb : FULL_BLOCK_AABB;
+		EnumFacing facing = state.getValue(FACING);
+		EnumShape shape = state.getValue(SHAPE);
+		EnumAxis axis = state.getValue(HALF) == EnumHalf.TOP ? EnumAxis.Y : EnumAxis.NONE;
+		AxisAlignedBB outerBase = shape == EnumShape.OUTER_LEFT ? SELECT_OUTER : Utils.flipAABB(SELECT_OUTER, EnumAxis.X);
+
+		switch(shape)
+		{
+			default:
+			case STRAIGHT:
+				return Utils.rotateAABB(Utils.flipAABB(SELECT_STRAIGHT, axis),
+						Utils.getRotationFromNorth(facing));
+			case OUTER_LEFT:
+			case OUTER_RIGHT:
+				return Utils.rotateAABB(Utils.flipAABB(outerBase, axis),
+						Utils.getRotationFromNorth(facing));
+			case INNER_LEFT:
+			case INNER_RIGHT:
+				return Utils.flipAABB(SELECT_INNER, axis);
+		}
+	}
+
+
+	/**
+	 * use for EnumShape.STRAIGHT, EnumShape.INNER_LEFT and EnumShape.INNER_RIGHT
+	 * @param state
+	 * @return
+	 */
+	private static AxisAlignedBB getStraightStep1(IBlockState state)
+	{
+		return Utils.rotateAABB(Utils.flipYAABB(COLLISION_STRAIGHT_STEP1, state.getValue(HALF) == BlockStairs.EnumHalf.TOP),
+				Utils.getRotationFromNorth(state.getValue(FACING)));
 	}
 
 	/**
@@ -244,20 +220,9 @@ public class BlockSmallStairs extends BlockStairs
 	 * @param state
 	 * @return
 	 */
-	private static AxisAlignedBB getStraightStep1(EnumFacing facing, EnumHalf half)
+	private static AxisAlignedBB getStraightStep2(IBlockState state)
 	{
-		return Utils.rotateAABB(Utils.flipYAABB(COLLISION_STRAIGHT_STEP1, half == EnumHalf.TOP),
-				Utils.getRotationFromNorth(facing));
-	}
-
-	/**
-	 * use for EnumShape.STRAIGHT, EnumShape.INNER_LEFT and EnumShape.INNER_RIGHT
-	 * @param state
-	 * @return
-	 */
-	private static AxisAlignedBB getStraightStep2(EnumFacing facing)
-	{
-		return Utils.rotateAABB(COLLISION_STRAIGHT_STEP2, Utils.getRotationFromNorth(facing));
+		return Utils.rotateAABB(COLLISION_STRAIGHT_STEP2, Utils.getRotationFromNorth(state.getValue(FACING)));
 	}
 
 	/**
@@ -265,10 +230,10 @@ public class BlockSmallStairs extends BlockStairs
 	 * @param state
 	 * @return
 	 */
-	private static AxisAlignedBB getInnerStep2(EnumFacing facing, EnumShape shape)
+	private static AxisAlignedBB getInnerStep2(IBlockState state)
 	{
 		return Utils.rotateAABB(COLLISION_STRAIGHT_STEP2,
-				Utils.getRotationFromNorth(getRotateFacing(facing, shape)));
+				Utils.getRotationFromNorth(getRotateFacing(state.getValue(FACING), state.getValue(SHAPE))));
 	}
 
 	/**
@@ -276,10 +241,10 @@ public class BlockSmallStairs extends BlockStairs
 	 * @param state
 	 * @return
 	 */
-	private static AxisAlignedBB getOuterStep1(EnumFacing facing, EnumShape shape, EnumHalf half)
+	private static AxisAlignedBB getOuterStep1(IBlockState state)
 	{
-		return Utils.rotateAABB(Utils.flipYAABB(COLLISION_OUTER_STEP1, half == EnumHalf.TOP),
-				Utils.getRotationFromNorth(getRotateFacing(facing, shape)));
+		return Utils.rotateAABB(Utils.flipYAABB(COLLISION_OUTER_STEP1, state.getValue(HALF) == BlockStairs.EnumHalf.TOP),
+				Utils.getRotationFromNorth(getRotateFacing(state.getValue(FACING), state.getValue(SHAPE))));
 	}
 
 	/**
@@ -287,10 +252,10 @@ public class BlockSmallStairs extends BlockStairs
 	 * @param state
 	 * @return
 	 */
-	private static AxisAlignedBB getOuterStep2(EnumFacing facing, EnumShape shape)
+	private static AxisAlignedBB getOuterStep2(IBlockState state)
 	{
 		return Utils.rotateAABB(COLLISION_OUTER_STEP2,
-				Utils.getRotationFromNorth(getRotateFacing(facing, shape)));
+				Utils.getRotationFromNorth(getRotateFacing(state.getValue(FACING), state.getValue(SHAPE))));
 	}
 
 	private static EnumFacing getRotateFacing(EnumFacing facing, EnumShape shape)
