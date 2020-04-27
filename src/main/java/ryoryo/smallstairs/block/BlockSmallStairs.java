@@ -1,11 +1,15 @@
 package ryoryo.smallstairs.block;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
+import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Table;
 
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.state.IBlockState;
@@ -20,6 +24,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import ryoryo.polishedlib.util.Utils;
+import ryoryo.polishedlib.util.enums.EnumAxis;
+import ryoryo.smallstairs.SmallStairs;
 
 public class BlockSmallStairs extends BlockStairs
 {
@@ -37,271 +44,140 @@ public class BlockSmallStairs extends BlockStairs
 	 *            V
 	 *            +z (SOUTH)
 	 */
-	//************************************************************************************************************************
-	/**
-	 * B: ... T: xxx
-	 * B: ... T: xxx
-	 * B: ... T: ...
-	 */
-	protected static final AxisAlignedBB AABB_TOP_NORTH = new AxisAlignedBB(base00, base06, base00, base10, base10, base03);
-	/**
-	 * B: ... T: ...
-	 * B: ... T: xxx
-	 * B: ... T: xxx
-	 */
-	protected static final AxisAlignedBB AABB_TOP_SOUTH = new AxisAlignedBB(base00, base06, base03, base10, base10, base10);
-	/**
-	 * B: ... T: xx.
-	 * B: ... T: xx.
-	 * B: ... T: xx.
-	 */
-	protected static final AxisAlignedBB AABB_TOP_WEST = new AxisAlignedBB(base00, base06, base00, base06, base10, base10);
-	/**
-	 * B: ... T: .xx
-	 * B: ... T: .xx
-	 * B: ... T: .xx
-	 */
-	protected static final AxisAlignedBB AABB_TOP_EAST = new AxisAlignedBB(base03, base06, base00, base10, base10, base10);
-	//*******************************************************************************************************************************
-	/**
-	 * B: xxx T: ...
-	 * B: xxx T: ...
-	 * B: ... T: ...
-	 */
-	protected static final AxisAlignedBB AABB_BOTTOM_NORTH = new AxisAlignedBB(base00, base00, base00, base10, base03, base06);
-	/**
-	 * B: ... T: ...
-	 * B: xxx T: ...
-	 * B: xxx T: ...
-	 */
-	protected static final AxisAlignedBB AABB_BOTTOM_SOUTH = new AxisAlignedBB(base00, base00, base03, base10, base03, base10);
-	/**
-	 * B: xx. T: ...
-	 * B: xx. T: ...
-	 * B: xx. T: ...
-	 */
-	protected static final AxisAlignedBB AABB_BOTTOM_WEST = new AxisAlignedBB(base00, base00, base00, base06, base03, base10);
-	/**
-	 * B: .xx T: ...
-	 * B: .xx T: ...
-	 * B: .xx T: ...
-	 */
-	protected static final AxisAlignedBB AABB_BOTTOM_EAST = new AxisAlignedBB(base03, base00, base00, base10, base03, base10);
 	//********************************************************************************************************************************
 	/**
-	 * B: xxx T: ...
-	 * B: ... T: ...
-	 * B: ... T: ...
+	 * B: xxx M: ... T: ...
+	 * B: xxx M: ... T: ...
+	 * B: ... M: ... T: ...
 	 */
-	protected static final AxisAlignedBB AABB_QTR_NORTH = new AxisAlignedBB(base00, base03, base00, base10, base06, base03);
-	/**
-	 * B: ... T: ...
-	 * B: ... T: ...
-	 * B: xxx T: ...
-	 */
-	protected static final AxisAlignedBB AABB_QTR_SOUTH = new AxisAlignedBB(base00, base03, base06, base10, base06, base10);
-	/**
-	 * B: x.. T: ...
-	 * B: x.. T: ...
-	 * B: x.. T: ...
-	 */
-	protected static final AxisAlignedBB AABB_QTR_WEST = new AxisAlignedBB(base00, base03, base00, base03, base06, base10);
-	/**
-	 * B: ..x T: ...
-	 * B: ..x T: ...
-	 * B: ..x T: ...
-	 */
-	protected static final AxisAlignedBB AABB_QTR_EAST = new AxisAlignedBB(base06, base03, base00, base10, base06, base10);
-	//**************************************************************************************************************************************
-	/**
-	 * B: x.. T: ...
-	 * B: ... T: ...
-	 * B: ... T: ...
-	 */
-	protected static final AxisAlignedBB AABB_OCT_NW = new AxisAlignedBB(base00, base03, base00, base03, base06, base03);
-	/**
-	 * B: ..x T: ...
-	 * B: ... T: ...
-	 * B: ... T: ...
-	 */
-	protected static final AxisAlignedBB AABB_OCT_NE = new AxisAlignedBB(base06, base03, base00, base10, base06, base03);
-	/**
-	 * B: ... T: ...
-	 * B: ... T: ...
-	 * B: x.. T: ...
-	 */
-	protected static final AxisAlignedBB AABB_OCT_SW = new AxisAlignedBB(base00, base03, base06, base03, base06, base10);
-	/**
-	 * B: ... T: ...
-	 * B: ... T: ...
-	 * B: ..x T: ...
-	 */
-	protected static final AxisAlignedBB AABB_OCT_SE = new AxisAlignedBB(base06, base03, base06, base10, base06, base10);
-	//*************************************************************************************************************************************
-	/**
-	 * B: ... T: xx.
-	 * B: ... T: xx.
-	 * B: ... T: ...
-	 */
-	protected static final AxisAlignedBB AABB_TOP_OCT_NW = new AxisAlignedBB(base00, base06, base00, base06, base10, base06);
-	/**
-	 * B: ... T: .xx
-	 * B: ... T: .xx
-	 * B: ... T: ...
-	 */
-	protected static final AxisAlignedBB AABB_TOP_OCT_NE = new AxisAlignedBB(base03, base06, base00, base10, base10, base06);
-	/**
-	 * B: ... T: ...
-	 * B: ... T: xx.
-	 * B: ... T: xx.
-	 */
-	protected static final AxisAlignedBB AABB_TOP_OCT_SW = new AxisAlignedBB(base00, base06, base03, base06, base10, base10);
-	/**
-	 * B: ... T: ...
-	 * B: ... T: .xx
-	 * B: ... T: .xx
-	 */
-	protected static final AxisAlignedBB AABB_TOP_OCT_SE = new AxisAlignedBB(base03, base06, base03, base10, base10, base10);
+	protected static final AxisAlignedBB COLLISION_STRAIGHT_STEP1 = new AxisAlignedBB(base00, base00, base00, base10, base03, base06);
 	//********************************************************************************************************************************
 	/**
-	 * B: xx. T: ...
-	 * B: xx. T: ...
-	 * B: ... T: ...
+	 * B: ... M: xxx T: ...
+	 * B: ... M: ... T: ...
+	 * B: ... M: ... T: ...
 	 */
-	protected static final AxisAlignedBB AABB_BOT_OCT_NW = new AxisAlignedBB(base00, base00, base00, base06, base03, base06);
-	/**
-	 * B: .xx T: ...
-	 * B: .xx T: ...
-	 * B: ... T: ...
-	 */
-	protected static final AxisAlignedBB AABB_BOT_OCT_NE = new AxisAlignedBB(base03, base00, base00, base10, base03, base06);
-	/**
-	 * B: ... T: ...
-	 * B: xx. T: ...
-	 * B: xx. T: ...
-	 */
-	protected static final AxisAlignedBB AABB_BOT_OCT_SW = new AxisAlignedBB(base00, base00, base03, base06, base03, base10);
-	/**
-	 * B: ... T: ...
-	 * B: .xx T: ...
-	 * B: .xx T: ...
-	 */
-	protected static final AxisAlignedBB AABB_BOT_OCT_SE = new AxisAlignedBB(base03, base00, base03, base10, base03, base10);
+	protected static final AxisAlignedBB COLLISION_STRAIGHT_STEP2 = new AxisAlignedBB(base00, base03, base00, base10, base06, base03);
 	//********************************************************************************************************************************
 	/**
-	 * B: xxx M:xxx T: ...
-	 * B: xxx M:xxx T: ...
-	 * B: ... M:... T: ...
+	 * B: xx. M: ... T: ...
+	 * B: xx. M: ... T: ...
+	 * B: ... M: ... T: ...
 	 */
-	protected static final AxisAlignedBB SELECT_BOT_SOUTH = new AxisAlignedBB(base00, base00, base03, base10, base06, base10);
-	/**
-	 * B: ... M:... T: ...
-	 * B: xxx M:xxx T: ...
-	 * B: xxx M:xxx T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_BOT_NORTH = new AxisAlignedBB(base00, base00, base00, base10, base06, base06);
-	/**
-	 * B: .xx M:.xx T: ...
-	 * B: .xx M:.xx T: ...
-	 * B: .xx M:.xx T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_BOT_WEST = new AxisAlignedBB(base00, base00, base00, base06, base06, base10);
-	/**
-	 * B: xx. M:xx. T: ...
-	 * B: xx. M:xx. T: ...
-	 * B: xx. M:xx. T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_BOT_EAST = new AxisAlignedBB(base03, base00, base00, base10, base06, base10);
-	//**********************************************************************************************************************************
-	/**
-	 * B: ... M:xxx T: xxx
-	 * B: ... M:xxx T: xxx
-	 * B: ... M:... T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_SOUTH = new AxisAlignedBB(base00, base03, base03, base10, base10, base10);
-	/**
-	 * B: ... M:... T: ...
-	 * B: ... M:xxx T: xxx
-	 * B: ... M:xxx T: xxx
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_NORTH = new AxisAlignedBB(base00, base03, base00, base10, base10, base06);
-	/**
-	 * B: ... M:.xx T: .xx
-	 * B: ... M:.xx T: .xx
-	 * B: ... M:.xx T: .xx
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_WEST = new AxisAlignedBB(base00, base03, base00, base06, base10, base10);
-	/**
-	 * B: ... M:xx. T: xx.
-	 * B: ... M:xx. T: xx.
-	 * B: ... M:xx. T: xx.
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_EAST = new AxisAlignedBB(base03, base03, base00, base10, base10, base10);
-	//*********************************************************************************************************************************
-	/**
-	 * B: ... M:xx. T: xx.
-	 * B: ... M:xx. T: xx.
-	 * B: ... M:... T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_OUTER_NW = new AxisAlignedBB(base00, base03, base00, base06, base10, base06);
-	/**
-	 * B: ... M:.xx T: .xx
-	 * B: ... M:.xx T: .xx
-	 * B: ... M:... T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_OUTER_NE = new AxisAlignedBB(base03, base03, base00, base10, base10, base06);
-	/**
-	 * B: ... M:... T: ...
-	 * B: ... M:xx. T: xx.
-	 * B: ... M:xx. T: xx.
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_OUTER_SW = new AxisAlignedBB(base00, base03, base03, base06, base10, base10);
-	/**
-	 * B: ... M:... T: ...
-	 * B: ... M:.xx T: .xx
-	 * B: ... M:.xx T: .xx
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_OUTER_SE = new AxisAlignedBB(base03, base03, base03, base10, base10, base10);
+	protected static final AxisAlignedBB COLLISION_OUTER_STEP1 = new AxisAlignedBB(base00, base00, base00, base06, base03, base06);
 	//********************************************************************************************************************************
 	/**
-	 * B: xx. M:xx. T: ...
-	 * B: xx. M:xx. T: ...
-	 * B: ... M:... T: ...
+	 * B: ... M: x.. T: ...
+	 * B: ... M: ... T: ...
+	 * B: ... M: ... T: ...
 	 */
-	protected static final AxisAlignedBB SELECT_BOT_OUTER_NW = new AxisAlignedBB(base00, base00, base00, base06, base06, base06);
+	protected static final AxisAlignedBB COLLISION_OUTER_STEP2 = new AxisAlignedBB(base00, base03, base00, base03, base06, base03);
+	//********************************************************************************************************************************
 	/**
-	 * B: .xx M:.xx T: ...
-	 * B: .xx M:.xx T: ...
-	 * B: ... M:... T: ...
+	 * B: xxx M: xxx T: ...
+	 * B: xxx M: xxx T: ...
+	 * B: ... M: ... T: ...
 	 */
-	protected static final AxisAlignedBB SELECT_BOT_OUTER_NE = new AxisAlignedBB(base03, base00, base00, base10, base06, base06);
+	protected static final AxisAlignedBB SELECT_STRAIGHT = new AxisAlignedBB(base00, base00, base00, base10, base06, base06);
+	//********************************************************************************************************************************
 	/**
-	 * B: ... M:... T: ...
-	 * B: xx. M:xx. T: ...
-	 * B: xx. M:xx. T: ...
+	 * B: xx. M: xx. T: ...
+	 * B: xx. M: xx. T: ...
+	 * B: ... M: ... T: ...
 	 */
-	protected static final AxisAlignedBB SELECT_BOT_OUTER_SW = new AxisAlignedBB(base00, base00, base03, base06, base06, base10);
+	protected static final AxisAlignedBB SELECT_OUTER = new AxisAlignedBB(base00, base00, base00, base06, base06, base06);
+	//********************************************************************************************************************************
 	/**
-	 * B: ... M:... T: ...
-	 * B: .xx M:.xx T: ...
-	 * B: .xx M:.xx T: ...
+	 * B: xxx M: xxx T: ...
+	 * B: xxx M: xxx T: ...
+	 * B: xxx M: xxx T: ...
 	 */
-	protected static final AxisAlignedBB SELECT_BOT_OUTER_SE = new AxisAlignedBB(base03, base00, base03, base10, base06, base10);
-	//*********************************************************************************************************************************
-	/**
-	 * B: xx. M:xx. T: ...
-	 * B: xx. M:xx. T: ...
-	 * B: ... M:... T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_BOT_INNER = new AxisAlignedBB(base00, base00, base00, base10, base06, base10);
-	//*********************************************************************************************************************************
-	/**
-	 * B: xx. M:xx. T: ...
-	 * B: xx. M:xx. T: ...
-	 * B: ... M:... T: ...
-	 */
-	protected static final AxisAlignedBB SELECT_TOP_INNER = new AxisAlignedBB(base00, base03, base00, base10, base10, base10);
-	//*********************************************************************************************************************************
+	protected static final AxisAlignedBB SELECT_INNER = new AxisAlignedBB(base00, base00, base00, base10, base06, base10);
+	//********************************************************************************************************************************
+
+	private static final Table<EnumFacing, EnumShape, EnumMap<EnumHalf, List<AxisAlignedBB>>> COLLISION_AABBS = HashBasedTable.create();
+	private static final Table<EnumFacing, EnumShape, EnumMap<EnumHalf, AxisAlignedBB>> SELECTION_AABBS = HashBasedTable.create();
+
+	static
+	{
+		long startTime = System.nanoTime();
+
+		Stream.of(EnumFacing.values())
+		.filter(f -> (f != EnumFacing.UP && f != EnumFacing.DOWN))
+		.forEach(facing ->
+		{
+			for(EnumShape shape : EnumShape.values())
+			{
+				EnumMap<EnumHalf, List<AxisAlignedBB>> halfMap = new EnumMap<EnumHalf, List<AxisAlignedBB>>(EnumHalf.class);
+
+				for(EnumHalf half : EnumHalf.values())
+				{
+					List<AxisAlignedBB> bounds = Lists.newArrayList();
+
+					if(shape == EnumShape.STRAIGHT || shape == EnumShape.INNER_LEFT || shape == EnumShape.INNER_RIGHT)
+					{
+						bounds.add(getStraightStep1(facing, half));
+						bounds.add(getStraightStep2(facing));
+					}
+
+					if(shape == EnumShape.INNER_LEFT || shape == EnumShape.INNER_RIGHT)
+					{
+						bounds.add(getOuterStep1(facing, shape, half));
+						bounds.add(getInnerStep2(facing, shape));
+					}
+
+					if(shape == EnumShape.OUTER_LEFT || shape == EnumShape.OUTER_RIGHT)
+					{
+						bounds.add(getOuterStep1(facing, shape, half));
+						bounds.add(getOuterStep2(facing, shape));
+					}
+
+					halfMap.put(half, bounds);
+				}
+
+				COLLISION_AABBS.put(facing, shape, halfMap);
+			}
+		});
+
+		Stream.of(EnumFacing.values())
+		.filter(f -> (f != EnumFacing.UP && f != EnumFacing.DOWN))
+		.forEach(facing ->
+		{
+			for(EnumShape shape : EnumShape.values())
+			{
+				EnumMap<EnumHalf, AxisAlignedBB> halfMap = new EnumMap<EnumHalf, AxisAlignedBB>(EnumHalf.class);
+
+				for(EnumHalf half : EnumHalf.values())
+				{
+					EnumAxis axis = half == EnumHalf.TOP ? EnumAxis.Y : EnumAxis.NONE;
+					AxisAlignedBB outerBase = shape == EnumShape.OUTER_LEFT ? SELECT_OUTER : Utils.flipAABB(SELECT_OUTER, EnumAxis.X);
+
+					switch(shape)
+					{
+						default:
+						case STRAIGHT:
+							halfMap.put(half, Utils.rotateAABB(Utils.flipAABB(SELECT_STRAIGHT, axis),
+									Utils.getRotationFromNorth(facing)));
+							break;
+						case OUTER_LEFT:
+						case OUTER_RIGHT:
+							halfMap.put(half, Utils.rotateAABB(Utils.flipAABB(outerBase, axis),
+									Utils.getRotationFromNorth(facing)));
+							break;
+						case INNER_LEFT:
+						case INNER_RIGHT:
+							halfMap.put(half, Utils.flipAABB(SELECT_INNER, axis));
+							break;
+					}
+				}
+
+				SELECTION_AABBS.put(facing, shape, halfMap);
+			}
+		});
+
+		long endTime = System.nanoTime();
+		SmallStairs.LOGGER.info("Initializing collision boxes took " + (endTime-startTime)/1000000F + " ms");
+	}
 
 	public BlockSmallStairs(IBlockState modelState, String name)
 	{
@@ -327,139 +203,14 @@ public class BlockSmallStairs extends BlockStairs
 	public void addCollisionBoxToList(IBlockState state, World world, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entity, boolean isActualState)
 	{
 		getCollisionBoxList(this.getActualState(state, world, pos))
-			.forEach(aabb -> addCollisionBoxToList(pos, entityBox, collidingBoxes, aabb));
-	}
-
-	private static List<AxisAlignedBB> getCollisionBoxList(IBlockState state)
-	{
-		List<AxisAlignedBB> list = Lists.newArrayList();
-
-		BlockStairs.EnumShape shape = (BlockStairs.EnumShape) state.getValue(BlockSmallStairs.SHAPE);
-
-		if(shape == BlockStairs.EnumShape.STRAIGHT || shape == BlockStairs.EnumShape.INNER_LEFT || shape == BlockStairs.EnumShape.INNER_RIGHT)
-		{
-			list.add(getBaseBlock(state));
-			list.add(getCollQuarterBlock(state));
-		}
-
-		if(shape != BlockStairs.EnumShape.STRAIGHT)
-		{
-			list.add(getCollEighthBaseBlock(state));
-			list.add(getCollEighthBlock(state));
-		}
-
-		return list;
-	}
-
-	private static AxisAlignedBB getBaseBlock(IBlockState state)
-	{
-		boolean flag = state.getValue(BlockSmallStairs.HALF) == BlockStairs.EnumHalf.TOP;
-		switch((EnumFacing) state.getValue(BlockSmallStairs.FACING))
-		{
-		case NORTH:
-		default:
-			return flag ? AABB_TOP_NORTH : AABB_BOTTOM_NORTH;
-		case SOUTH:
-			return flag ? AABB_TOP_SOUTH : AABB_BOTTOM_SOUTH;
-		case WEST:
-			return flag ? AABB_TOP_WEST : AABB_BOTTOM_WEST;
-		case EAST:
-			return flag ? AABB_TOP_EAST : AABB_BOTTOM_EAST;
-		}
-	}
-
-	private static AxisAlignedBB getCollEighthBaseBlock(IBlockState state)
-	{
-		EnumFacing facing = (EnumFacing) state.getValue(BlockSmallStairs.FACING);
-		EnumFacing facing1;
-
-		switch((BlockStairs.EnumShape) state.getValue(BlockSmallStairs.SHAPE))
-		{
-		case OUTER_LEFT:
-		default:
-			facing1 = facing;
-			break;
-		case OUTER_RIGHT:
-			facing1 = facing.rotateY();
-			break;
-		case INNER_RIGHT:
-			facing1 = facing.getOpposite();
-			break;
-		case INNER_LEFT:
-			facing1 = facing.rotateYCCW();
-		}
-
-		boolean flag = state.getValue(BlockSmallStairs.HALF) == BlockStairs.EnumHalf.TOP;
-		switch(facing1)
-		{
-		case NORTH:
-		default:
-			return flag ? AABB_TOP_OCT_NW : AABB_BOT_OCT_NW;
-		case SOUTH:
-			return flag ? AABB_TOP_OCT_SE : AABB_BOT_OCT_SE;
-		case WEST:
-			return flag ? AABB_TOP_OCT_SW : AABB_BOT_OCT_SW;
-		case EAST:
-			return flag ? AABB_TOP_OCT_NE : AABB_BOT_OCT_NE;
-		}
-	}
-
-	private static AxisAlignedBB getCollQuarterBlock(IBlockState state)
-	{
-		switch((EnumFacing) state.getValue(BlockSmallStairs.FACING))
-		{
-		case NORTH:
-		default:
-			return AABB_QTR_NORTH;
-		case SOUTH:
-			return AABB_QTR_SOUTH;
-		case WEST:
-			return AABB_QTR_WEST;
-		case EAST:
-			return AABB_QTR_EAST;
-		}
-	}
-
-	private static AxisAlignedBB getCollEighthBlock(IBlockState state)
-	{
-		EnumFacing facing = (EnumFacing) state.getValue(BlockSmallStairs.FACING);
-		EnumFacing facing1;
-
-		switch((BlockStairs.EnumShape) state.getValue(BlockSmallStairs.SHAPE))
-		{
-		case OUTER_LEFT:
-		default:
-			facing1 = facing;
-			break;
-		case OUTER_RIGHT:
-			facing1 = facing.rotateY();
-			break;
-		case INNER_RIGHT:
-			facing1 = facing.getOpposite();
-			break;
-		case INNER_LEFT:
-			facing1 = facing.rotateYCCW();
-		}
-
-		switch(facing1)
-		{
-		case NORTH:
-		default:
-			return AABB_OCT_NW;
-		case SOUTH:
-			return AABB_OCT_SE;
-		case WEST:
-			return AABB_OCT_SW;
-		case EAST:
-			return AABB_OCT_NE;
-		}
+		.forEach(aabb -> addCollisionBoxToList(pos, entityBox, collidingBoxes, aabb));
 	}
 
 	@Override
 	@Nullable
-	public RayTraceResult collisionRayTrace(IBlockState blockState, World world, BlockPos pos, Vec3d start, Vec3d end)
+	public RayTraceResult collisionRayTrace(IBlockState state, World world, BlockPos pos, Vec3d start, Vec3d end)
 	{
-		return getCollisionBoxList(this.getActualState(blockState, world, pos)).stream()
+		return getCollisionBoxList(this.getActualState(state, world, pos)).stream()
 			.map(aabb -> this.rayTrace(pos, start, end, aabb))
 			.filter(Objects::nonNull)
 			.max((result1, result2) -> (int) (result1.hitVec.squareDistanceTo(end) - result2.hitVec.squareDistanceTo(end)))
@@ -467,68 +218,94 @@ public class BlockSmallStairs extends BlockStairs
 	}
 
 	/**
-	 * Return an AABB (""""in world coords!""") that should be highlighted when the player is targeting this Block
+	 * to return an AABB "in world coords", use AxisAlignedBB.offset(pos)
 	 */
 	@Override
 	@SideOnly(Side.CLIENT)
 	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World world, BlockPos pos)
 	{
-		state = this.getActualState(state, world, pos);
-		EnumFacing facing = state.getValue(BlockSmallStairs.FACING);
-		EnumShape shape = state.getValue(BlockSmallStairs.SHAPE);
-		boolean flag = state.getValue(BlockSmallStairs.HALF) == EnumHalf.TOP;
+		return getSelectionBox(this.getActualState(state, world, pos)).offset(pos);
+	}
 
-		if(shape == EnumShape.STRAIGHT)
-		{
-			switch(facing)
-			{
-			case NORTH:
-			default:
-				return flag ? SELECT_TOP_NORTH.offset(pos) : SELECT_BOT_NORTH.offset(pos);
-			case SOUTH:
-				return flag ? SELECT_TOP_SOUTH.offset(pos) : SELECT_BOT_SOUTH.offset(pos);
-			case WEST:
-				return flag ? SELECT_TOP_WEST.offset(pos) : SELECT_BOT_WEST.offset(pos);
-			case EAST:
-				return flag ? SELECT_TOP_EAST.offset(pos) : SELECT_BOT_EAST.offset(pos);
-			}
-		}
-		else if(shape == EnumShape.OUTER_LEFT)
-		{
-			switch(facing)
-			{
-			case NORTH:
-			default:
-				return flag ? SELECT_TOP_OUTER_NW.offset(pos) : SELECT_BOT_OUTER_NW.offset(pos);
-			case SOUTH:
-				return flag ? SELECT_TOP_OUTER_SE.offset(pos) : SELECT_BOT_OUTER_SE.offset(pos);
-			case WEST:
-				return flag ? SELECT_TOP_OUTER_SW.offset(pos) : SELECT_BOT_OUTER_SW.offset(pos);
-			case EAST:
-				return flag ? SELECT_TOP_OUTER_NE.offset(pos) : SELECT_BOT_OUTER_NE.offset(pos);
-			}
-		}
-		else if(shape == EnumShape.OUTER_RIGHT)
-		{
-			switch(facing)
-			{
-			case NORTH:
-			default:
-				return flag ? SELECT_TOP_OUTER_NE.offset(pos) : SELECT_BOT_OUTER_NE.offset(pos);
-			case SOUTH:
-				return flag ? SELECT_TOP_OUTER_SW.offset(pos) : SELECT_BOT_OUTER_SW.offset(pos);
-			case WEST:
-				return flag ? SELECT_TOP_OUTER_NW.offset(pos) : SELECT_BOT_OUTER_NW.offset(pos);
-			case EAST:
-				return flag ? SELECT_TOP_OUTER_SE.offset(pos) : SELECT_BOT_OUTER_SE.offset(pos);
+	private static List<AxisAlignedBB> getCollisionBoxList(IBlockState state)
+	{
+		List<AxisAlignedBB> list = COLLISION_AABBS.get(state.getValue(FACING), state.getValue(SHAPE)).get(state.getValue(HALF));
+		return list != null ? list : Lists.newArrayList(FULL_BLOCK_AABB);
+	}
 
-			}
-		}
-		else if(shape == EnumShape.INNER_LEFT || shape == EnumShape.INNER_RIGHT)
-		{
-			return flag ? SELECT_TOP_INNER.offset(pos) : SELECT_BOT_INNER.offset(pos);
-		}
+	private static AxisAlignedBB getSelectionBox(IBlockState state)
+	{
+		AxisAlignedBB aabb = SELECTION_AABBS.get(state.getValue(FACING), state.getValue(SHAPE)).get(state.getValue(HALF));
+		return aabb != null ? aabb : FULL_BLOCK_AABB;
+	}
 
-		return NULL_AABB.offset(pos);
+	/**
+	 * use for EnumShape.STRAIGHT, EnumShape.INNER_LEFT and EnumShape.INNER_RIGHT
+	 * @param state
+	 * @return
+	 */
+	private static AxisAlignedBB getStraightStep1(EnumFacing facing, EnumHalf half)
+	{
+		return Utils.rotateAABB(Utils.flipYAABB(COLLISION_STRAIGHT_STEP1, half == EnumHalf.TOP),
+				Utils.getRotationFromNorth(facing));
+	}
+
+	/**
+	 * use for EnumShape.STRAIGHT, EnumShape.INNER_LEFT and EnumShape.INNER_RIGHT
+	 * @param state
+	 * @return
+	 */
+	private static AxisAlignedBB getStraightStep2(EnumFacing facing)
+	{
+		return Utils.rotateAABB(COLLISION_STRAIGHT_STEP2, Utils.getRotationFromNorth(facing));
+	}
+
+	/**
+	 * use for EnumShape.INNER_LEFT and EnumShape.INNER_RIGHT
+	 * @param state
+	 * @return
+	 */
+	private static AxisAlignedBB getInnerStep2(EnumFacing facing, EnumShape shape)
+	{
+		return Utils.rotateAABB(COLLISION_STRAIGHT_STEP2,
+				Utils.getRotationFromNorth(getRotateFacing(facing, shape)));
+	}
+
+	/**
+	 * use for EnumShape.OUTER_LEFT, EnumShape.OUTER_RIGHT, EnumShape.INNER_LEFT and EnumShape.INNER_RIGHT
+	 * @param state
+	 * @return
+	 */
+	private static AxisAlignedBB getOuterStep1(EnumFacing facing, EnumShape shape, EnumHalf half)
+	{
+		return Utils.rotateAABB(Utils.flipYAABB(COLLISION_OUTER_STEP1, half == EnumHalf.TOP),
+				Utils.getRotationFromNorth(getRotateFacing(facing, shape)));
+	}
+
+	/**
+	 * use for EnumShape.OUTER_LEFT and EnumShape.OUTER_RIGHT
+	 * @param state
+	 * @return
+	 */
+	private static AxisAlignedBB getOuterStep2(EnumFacing facing, EnumShape shape)
+	{
+		return Utils.rotateAABB(COLLISION_OUTER_STEP2,
+				Utils.getRotationFromNorth(getRotateFacing(facing, shape)));
+	}
+
+	private static EnumFacing getRotateFacing(EnumFacing facing, EnumShape shape)
+	{
+		switch(shape)
+		{
+			default:
+			case OUTER_LEFT:
+				return facing;
+			case OUTER_RIGHT:
+				return facing.rotateY();
+			case INNER_RIGHT:
+				return facing.rotateY();
+			case INNER_LEFT:
+				return facing.rotateYCCW();
+		}
 	}
 }
