@@ -4,8 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import ryoryo.smallstairs.SmallStairs;
 
-public class ModBlocks
-{
+public class ModBlocks {
 	public static final Block BLOCK_SS_OAK_PLANKS = new BlockSmallStairs(Blocks.PLANKS.getDefaultState(), "planks_oak");
 	public static final Block BLOCK_SS_SPRUCE_PLANKS = new BlockSmallStairs(Blocks.PLANKS.getDefaultState(), "planks_spruce");
 	public static final Block BLOCK_SS_BIRCH_PLANKS = new BlockSmallStairs(Blocks.PLANKS.getDefaultState(), "planks_birch");
@@ -24,9 +23,7 @@ public class ModBlocks
 	public static final Block BLOCK_SS_YELLOW_WOOL = new BlockSmallStairs(Blocks.WOOL.getDefaultState(), "wool_yellow");
 	public static final Block BLOCK_SS_QUARTZ_BLOCK = new BlockSmallStairs(Blocks.QUARTZ_BLOCK.getDefaultState(), "quartz_block");
 
-
-	public static void init()
-	{
+	public static void init() {
 		registerSmallStairs(BLOCK_SS_COBBLESTONE, "cobblestone");
 		registerSmallStairs(BLOCK_SS_OAK_PLANKS, "planks_oak");
 		registerSmallStairs(BLOCK_SS_SPRUCE_PLANKS, "planks_spruce");
@@ -52,8 +49,7 @@ public class ModBlocks
 	 * @param block
 	 * @param name
 	 */
-	public static void registerSmallStairs(Block block, String name)
-	{
+	public static void registerSmallStairs(Block block, String name) {
 		SmallStairs.REGISTER.registerBlock(block, "small_stairs_" + name);
 	}
 }

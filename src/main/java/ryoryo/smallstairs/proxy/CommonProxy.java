@@ -18,20 +18,15 @@ import ryoryo.polishedlib.util.enums.EnumPlanks;
 import ryoryo.smallstairs.SmallStairs;
 import ryoryo.smallstairs.block.ModBlocks;
 
-public class CommonProxy
-{
-	public void preInit(FMLPreInitializationEvent event)
-	{
+public class CommonProxy {
+	public void preInit(FMLPreInitializationEvent event) {
 		ModBlocks.init();
 	}
 
-	public void init(FMLInitializationEvent event)
-	{
-		//ミニ階段
-		Block[] small_stairs = new Block[]
-		{ ModBlocks.BLOCK_SS_OAK_PLANKS, ModBlocks.BLOCK_SS_SPRUCE_PLANKS, ModBlocks.BLOCK_SS_BIRCH_PLANKS, ModBlocks.BLOCK_SS_JUNGLE_PLANKS, ModBlocks.BLOCK_SS_ACACIA_PLANKS, ModBlocks.BLOCK_SS_DARK_OAK_PLANKS };
-		for(int i = 0; i < 6; i++)
-		{
+	public void init(FMLInitializationEvent event) {
+		// ミニ階段
+		Block[] small_stairs = new Block[] { ModBlocks.BLOCK_SS_OAK_PLANKS, ModBlocks.BLOCK_SS_SPRUCE_PLANKS, ModBlocks.BLOCK_SS_BIRCH_PLANKS, ModBlocks.BLOCK_SS_JUNGLE_PLANKS, ModBlocks.BLOCK_SS_ACACIA_PLANKS, ModBlocks.BLOCK_SS_DARK_OAK_PLANKS };
+		for(int i = 0; i < 6; i++) {
 			addRecipeSmallStairs(EnumPlanks.byMeta(i).getName(), small_stairs[i], new ItemStack(Blocks.PLANKS, 1, i));
 		}
 		addRecipeSmallStairs("cobblestone", ModBlocks.BLOCK_SS_COBBLESTONE, new ItemStack(Blocks.COBBLESTONE));
@@ -47,33 +42,28 @@ public class CommonProxy
 		addRecipeSmallStairs("quartz", ModBlocks.BLOCK_SS_QUARTZ_BLOCK, new ItemStack(Blocks.QUARTZ_BLOCK, 1, BlockQuartz.EnumType.DEFAULT.getMetadata()));
 	}
 
-	public void postInit(FMLPostInitializationEvent event)
-	{
+	public void postInit(FMLPostInitializationEvent event) {
 	}
 
-	public void loadComplete(FMLLoadCompleteEvent event)
-	{
+	public void loadComplete(FMLLoadCompleteEvent event) {
 	}
 
-	public static void addRecipe(String name, ItemStack output, Object... params)
-	{
+	public static void addRecipe(String name, ItemStack output, Object... params) {
 		SmallStairs.REGISTER.addRecipe(name, output, params);
 	}
 
-	public static void addShapelessRecipe(String name, @Nonnull ItemStack output, Object... params)
-	{
+	public static void addShapelessRecipe(String name, @Nonnull ItemStack output, Object... params) {
 		SmallStairs.REGISTER.addShapelessRecipe(name, output, params);
 	}
 
 	/**
-	 * 小さい階段レシピ登録
-	 * 名前の前に"small_stairs_"と足される
+	 * 小さい階段レシピ登録 名前の前に"small_stairs_"と足される
+	 * 
 	 * @param name
 	 * @param output
 	 * @param material
 	 */
-	public static void addRecipeSmallStairs(String name, Block output, Object material)
-	{
+	public static void addRecipeSmallStairs(String name, Block output, Object material) {
 		int quantity = 6;
 		if(Loader.isModLoaded("quark"))
 			quantity = 9;

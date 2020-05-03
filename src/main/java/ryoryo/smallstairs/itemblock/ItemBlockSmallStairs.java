@@ -15,27 +15,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import ryoryo.smallstairs.block.BlockSmallStairs;
 
-public class ItemBlockSmallStairs extends ItemBlock
-{
-	public ItemBlockSmallStairs(Block block)
-	{
+public class ItemBlockSmallStairs extends ItemBlock {
+	public ItemBlockSmallStairs(Block block) {
 		super(block);
 	}
 
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
-	{
+	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
 		ItemStack stack = player.getHeldItem(hand);
 		IBlockState iblockstate = world.getBlockState(pos);
 		Block block = iblockstate.getBlock();
 
-		if(!block.isReplaceable(world, pos))
-		{
+		if(!block.isReplaceable(world, pos)) {
 			pos = pos.offset(facing);
 		}
 
-		if(player.canPlayerEdit(pos, facing, stack) && this.block.canPlaceBlockAt(world, pos))
-		{
+		if(player.canPlayerEdit(pos, facing, stack) && this.block.canPlaceBlockAt(world, pos)) {
 			EnumFacing playerFacing = EnumFacing.fromAngle((double) player.rotationYaw);
 			placeStairs(world, pos, playerFacing, this.block, player, hitY);
 			SoundType soundtype = world.getBlockState(pos).getBlock().getSoundType(world.getBlockState(pos), world, pos, player);
@@ -43,15 +38,13 @@ public class ItemBlockSmallStairs extends ItemBlock
 			stack.shrink(1);
 			return EnumActionResult.SUCCESS;
 		}
-		else
-		{
+		else {
 			return EnumActionResult.FAIL;
 		}
 	}
 
-	public static void placeStairs(World world, BlockPos pos, EnumFacing facing, Block stairs, EntityPlayer player, float hitY)
-	{
+	public static void placeStairs(World world, BlockPos pos, EnumFacing facing, Block stairs, EntityPlayer player, float hitY) {
 		IBlockState state = stairs.getDefaultState().withProperty(BlockSmallStairs.FACING, facing).withProperty(BlockSmallStairs.SHAPE, BlockStairs.EnumShape.STRAIGHT);
-		world.setBlockState(pos, facing != EnumFacing.DOWN && (facing == EnumFacing.UP || (double)hitY <= 0.5D) ? state.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.BOTTOM) : state.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.TOP), 2);
+		world.setBlockState(pos, facing != EnumFacing.DOWN && (facing == EnumFacing.UP || (double) hitY <= 0.5D) ? state.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.BOTTOM) : state.withProperty(BlockSmallStairs.HALF, BlockStairs.EnumHalf.TOP), 2);
 	}
 }
