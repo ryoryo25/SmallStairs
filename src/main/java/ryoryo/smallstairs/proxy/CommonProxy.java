@@ -26,7 +26,7 @@ public class CommonProxy {
 	public void init(FMLInitializationEvent event) {
 		// ミニ階段
 		Block[] small_stairs = new Block[] { ModBlocks.BLOCK_SS_OAK_PLANKS, ModBlocks.BLOCK_SS_SPRUCE_PLANKS, ModBlocks.BLOCK_SS_BIRCH_PLANKS, ModBlocks.BLOCK_SS_JUNGLE_PLANKS, ModBlocks.BLOCK_SS_ACACIA_PLANKS, ModBlocks.BLOCK_SS_DARK_OAK_PLANKS };
-		for(int i = 0; i < 6; i++) {
+		for (int i = 0; i < 6; i ++) {
 			addRecipeSmallStairs(EnumPlanks.byMeta(i).getName(), small_stairs[i], new ItemStack(Blocks.PLANKS, 1, i));
 		}
 		addRecipeSmallStairs("cobblestone", ModBlocks.BLOCK_SS_COBBLESTONE, new ItemStack(Blocks.COBBLESTONE));
@@ -42,11 +42,9 @@ public class CommonProxy {
 		addRecipeSmallStairs("quartz", ModBlocks.BLOCK_SS_QUARTZ_BLOCK, new ItemStack(Blocks.QUARTZ_BLOCK, 1, BlockQuartz.EnumType.DEFAULT.getMetadata()));
 	}
 
-	public void postInit(FMLPostInitializationEvent event) {
-	}
+	public void postInit(FMLPostInitializationEvent event) {}
 
-	public void loadComplete(FMLLoadCompleteEvent event) {
-	}
+	public void loadComplete(FMLLoadCompleteEvent event) {}
 
 	public static void addRecipe(String name, ItemStack output, Object... params) {
 		SmallStairs.REGISTER.addRecipe(name, output, params);
@@ -58,17 +56,17 @@ public class CommonProxy {
 
 	/**
 	 * 小さい階段レシピ登録 名前の前に"small_stairs_"と足される
-	 * 
+	 *
 	 * @param name
 	 * @param output
 	 * @param material
 	 */
 	public static void addRecipeSmallStairs(String name, Block output, Object material) {
 		int quantity = 6;
-		if(Loader.isModLoaded("quark"))
+		if (Loader.isModLoaded("quark")) {
 			quantity = 9;
-		else
-			SmallStairs.LOGGER.info("Quark isn't loaded.");
+			SmallStairs.LOGGER.info("Quark is loaded!");
+		}
 
 		addRecipe("small_stairs_" + name, new ItemStack(output, quantity), "M ", "MM", 'M', material);
 	}
