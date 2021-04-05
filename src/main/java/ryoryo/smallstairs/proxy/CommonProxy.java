@@ -2,8 +2,6 @@ package ryoryo.smallstairs.proxy;
 
 import static net.minecraftforge.oredict.OreDictionary.*;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockQuartz;
 import net.minecraft.init.Blocks;
@@ -15,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import ryoryo.polishedlib.util.enums.EnumColor;
 import ryoryo.polishedlib.util.enums.EnumPlanks;
+import ryoryo.polishedlib.util.handlers.RecipeHandler;
 import ryoryo.smallstairs.SmallStairs;
 import ryoryo.smallstairs.block.ModBlocks;
 
@@ -46,14 +45,6 @@ public class CommonProxy {
 
 	public void loadComplete(FMLLoadCompleteEvent event) {}
 
-	public static void addRecipe(String name, ItemStack output, Object... params) {
-		SmallStairs.REGISTER.addRecipe(name, output, params);
-	}
-
-	public static void addShapelessRecipe(String name, @Nonnull ItemStack output, Object... params) {
-		SmallStairs.REGISTER.addShapelessRecipe(name, output, params);
-	}
-
 	/**
 	 * 小さい階段レシピ登録 名前の前に"small_stairs_"と足される
 	 *
@@ -68,6 +59,6 @@ public class CommonProxy {
 			SmallStairs.LOGGER.info("Quark is loaded!");
 		}
 
-		addRecipe("small_stairs_" + name, new ItemStack(output, quantity), "M ", "MM", 'M', material);
+		RecipeHandler.addRecipe("small_stairs_" + name, new ItemStack(output, quantity), "M ", "MM", 'M', material);
 	}
 }
